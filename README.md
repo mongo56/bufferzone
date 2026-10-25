@@ -1,5 +1,8 @@
 # Buffer Zone
 
+> Fork of [dkrb56/bufferzone](https://github.com/dkrb56/bufferzone) by Dani, with fixes for the LG webOS TV app:
+> faster remote response while the home screen loads, and Back from Subtitle style returns to the video.
+
 A clean player for a friend's Plex server: Windows, Android TV and LG webOS TVs.
 
 ## Download

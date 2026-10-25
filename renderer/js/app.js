@@ -398,6 +398,8 @@
 
     // ---------- navigation ----------
     go(name, args = {}, { replace = false, root = false } = {}) {
+      // Leaving the settings opened from the player (other than with Back) forgets the video to return to.
+      if (root || name !== 'settings') this.resumeAfter = null;
       if (root) this.history = [];
       else if (this.current && !replace) this.history.push({ ...this.current, scroll: this.main.scrollTop });
       this.current = { name, args };
@@ -405,10 +407,14 @@
     }
 
     back() {
+      const resume = this.current?.name === 'settings' ? this.resumeAfter : null;
+      this.resumeAfter = null;
       const prev = this.history.pop();
       if (!prev) return;
       this.current = prev;
       this.render(prev.scroll);
+      // Settings opened from the player: Back continues the video.
+      if (resume) this.player.play(resume.item, resume.opts);
     }
 
     async render(scroll = 0) {

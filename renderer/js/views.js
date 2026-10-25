@@ -25,7 +25,7 @@
 
   P.art = function (path, w, hgt, title, extra = []) {
     return h('div.art',
-      path ? h('img', { src: this.plex.image(path, w, hgt), loading: 'lazy', alt: '' }) : h('div.noimg', title || ''),
+      path ? h('img', { src: this.plex.image(path, w, hgt), loading: 'lazy', decoding: 'async', alt: '' }) : h('div.noimg', title || ''),
       ...extra);
   };
 
@@ -559,11 +559,18 @@
     setTimeout(() => document.addEventListener('mousedown', outside, true));
   };
 
+  // Watchlist posters come as full-size originals (TMDB's are often 2000x3000), and decoding those stalls a TV.
+  // TMDB has fixed smaller sizes; other hosts go through the server's image transcoder, which refuses TMDB.
+  function wlPoster(app, url) {
+    if (/^https:\/\/image\.tmdb\.org\/t\/p\/original\//.test(url)) return url.replace('/t/p/original/', '/t/p/w342/');
+    return app.plex.image(url, 300, 450);
+  }
+
   // Poster card for a watchlist row; titles the server does not have are dimmed.
   P.wlCard = function ({ w, s }) {
     if (s) return this.posterCard(s);
     const card = h('div.card.poster.off', { title: w.title, onclick: () => toast('This title is not on this server.') },
-      h('div.art', w.thumb ? h('img', { src: w.thumb, loading: 'lazy', alt: '' }) : h('div.noimg', w.title)),
+      h('div.art', w.thumb ? h('img', { src: wlPoster(this, w.thumb), loading: 'lazy', decoding: 'async', alt: '' }) : h('div.noimg', w.title)),
       h('div.c-title', w.title), h('div.c-sub', 'Not on server'));
     return card;
   };

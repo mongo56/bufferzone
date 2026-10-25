@@ -487,6 +487,14 @@
       this.burnSubs = false;
     }
 
+    // Settings → Subtitle style; Back from there returns to this video at the same spot.
+    openSubtitleStyle() {
+      const resume = { item: this.meta, opts: { startAt: this.time(), audioId: this.audioId, subId: this.subId, quality: this.qualityOverride || undefined } };
+      this.exit();
+      this.app.go('settings', { page: 'style' });
+      this.app.resumeAfter = resume;
+    }
+
     exit() {
       const meta = this.meta;
       this.closePop();
@@ -708,7 +716,7 @@
             h('div.tracks-col', h('div.eyebrow', 'Subtitles'), subs)),
           h('div.tracks-foot',
             h('span', this.isEpisode ? `Remembered for ${this.meta.grandparentTitle}` : 'Applies to this movie'),
-            h('button', { onclick: () => { this.exit(); this.app.go('settings', { page: 'style' }); } }, 'Subtitle style')));
+            h('button', { onclick: () => this.openSubtitleStyle() }, 'Subtitle style')));
         this.root.classList.add('tracks-open');
       } else if (kind === 'quality') {
         body = h('div.qmenu', h('div.eyebrow', 'Quality'),
